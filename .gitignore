@@ -1,0 +1,7 @@
+.env
+venv/
+bq_credentials.json
+celerybeat-schedule.db
+colslaue_dbt/logs/
+colslaue_dbt/target/
+colslaue_dbt/dbt_packages/

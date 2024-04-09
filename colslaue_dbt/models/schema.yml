@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: staging
+    database: colslaue
+    schema: staging
+    tables:
+      - name: test_table
