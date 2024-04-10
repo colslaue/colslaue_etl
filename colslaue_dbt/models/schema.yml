@@ -1,8 +1,8 @@
 version: 2
 
 sources:
-  - name: staging
+  - name: hubspot
     database: colslaue
-    schema: staging
+    schema: hubspot
     tables:
-      - name: test_table
+      - name: deal
