@@ -6,3 +6,5 @@ sources:
     schema: hubspot
     tables:
       - name: deal
+      - name: company
+      - name: deal_company

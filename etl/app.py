@@ -17,9 +17,23 @@ def dbt_run():
 
 @app.task
 def upload_deals_to_bigquery():
-    hubspot_data = hubspot.HubspotAPI.get_instance("/crm/v3/objects/deals").get_data()
-    data = hubspot.flatten_deals(hubspot_data)
-    bigquery.upload_json_to_table(data, "hubspot.deal")
+    deal_data = hubspot.HubspotAPI.get_instance("/crm/v3/objects/deals").get_data()
+    deal_data = hubspot.flatten_deals(deal_data)
+    bigquery.upload_json_to_table(deal_data, "hubspot.deal")
+
+
+@app.task
+def upload_companies_to_bigquery():
+    company_data = hubspot.HubspotAPI.get_instance("/crm/v3/objects/companies").get_data()
+    company_data = hubspot.flatten_companies(company_data)
+    bigquery.upload_json_to_table(company_data, "hubspot.company")
+
+
+@app.task
+def upload_deal_company_assoc_to_bigquery():
+    deal_company_data = hubspot.HubspotAPI.get_instance("/crm/v4/objects/deal?&associations=company").get_data()
+    deal_company_data = hubspot.flatten_deal_company(deal_company_data)
+    bigquery.upload_json_to_table(deal_company_data, "hubspot.deal_company")
 
 
 app.conf.beat_schedule = {
@@ -27,8 +41,16 @@ app.conf.beat_schedule = {
         "task": "etl.app.dbt_run",
         "schedule": crontab(minute="0", hour="3")
     },
-    "hubspot_to_bigquery":{
+    "deals_to_bigquery":{
         "task": "etl.app.upload_deals_to_bigquery",
-        "schedule": crontab(minute="*/15")
+        "schedule": crontab()
+    },
+    "companies_to_bigquery":{
+        "task": "etl.app.upload_companies_to_bigquery",
+        "schedule": crontab()
+    },
+    "deal_company_to_bigquery":{
+        "task": "etl.app.upload_deal_company_assoc_to_bigquery",
+        "schedule": crontab()
     }
 }

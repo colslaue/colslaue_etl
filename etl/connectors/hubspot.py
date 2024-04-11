@@ -44,3 +44,30 @@ def flatten_deals(data):
         }
         flattened_data.append(flat_dict)
     return flattened_data
+
+
+def flatten_companies(data):
+    flattened_data = []
+    for result in data["results"]:
+        flat_dict = {
+            "id": result["id"],
+            "createdate": result["properties"]["createdate"],
+            "name": result["properties"]["name"]
+        }
+        flattened_data.append(flat_dict)
+    return flattened_data
+
+
+def flatten_deal_company(data):
+    flattened_data = []
+    for result in data["results"]:
+        for company in result["associations"]["companies"]["results"]:
+            if company["type"] == "deal_to_company":
+                flat_dict = {
+                    "deal_id": result["id"],
+                    "companyid": company["id"]
+                }
+                flattened_data.append(flat_dict)
+            else:
+                continue
+    return flattened_data
