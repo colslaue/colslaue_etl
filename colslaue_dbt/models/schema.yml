@@ -9,3 +9,6 @@ sources:
       - name: company
       - name: deal_company
       - name: user
+
+models:
+  - name: hubspot__deals
