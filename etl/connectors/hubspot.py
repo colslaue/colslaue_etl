@@ -40,7 +40,8 @@ def flatten_deals(data):
             "createdate": result["properties"]["createdate"],
             "dealname": result["properties"]["dealname"],
             "dealstage": result["properties"]["dealstage"],
-            "pipeline": result["properties"]["pipeline"]
+            "pipeline": result["properties"]["pipeline"],
+            "hubspot_owner_id": result["properties"]["hubspot_owner_id"]
         }
         flattened_data.append(flat_dict)
     return flattened_data
@@ -62,12 +63,24 @@ def flatten_deal_company(data):
     flattened_data = []
     for result in data["results"]:
         for company in result["associations"]["companies"]["results"]:
-            if company["type"] == "deal_to_company":
-                flat_dict = {
-                    "deal_id": result["id"],
-                    "companyid": company["id"]
-                }
-                flattened_data.append(flat_dict)
-            else:
-                continue
+            flat_dict = {
+                "deal_id": result["id"],
+                "companyid": company["id"],
+                "type": company["type"]
+            }
+            flattened_data.append(flat_dict)
+    return flattened_data
+
+
+def flatten_users(data):
+    flattened_data = []
+    for result in data["results"]:
+        flat_dict = {
+            "id": result["id"],
+            "email": result["email"],
+            "firstname": result["firstName"],
+            "lastName": result["lastName"],
+            "userid": result["userId"]
+        }
+        flattened_data.append(flat_dict)
     return flattened_data

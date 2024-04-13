@@ -8,3 +8,4 @@ sources:
       - name: deal
       - name: company
       - name: deal_company
+      - name: user
