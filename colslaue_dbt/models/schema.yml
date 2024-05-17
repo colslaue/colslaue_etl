@@ -12,3 +12,9 @@ sources:
 
 models:
   - name: hubspot__deals
+    description: 'all hubspot crm deals - one record per deal'
+    columns:
+      - name: deal_id
+        description: 'primary key'
+        tests:
+          - unique
