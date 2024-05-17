@@ -9,9 +9,9 @@ app = Celery("etl_scheduler", broker=CONFIG.CELERY_BROKER_URL)
 
 
 @app.task
-def dbt_run():
+def dbt_build():
     dbt = dbtRunner()
-    cli_args = ["run", "--target", "prod"]
+    cli_args = ["build", "--target", "prod"]
     dbt.invoke(cli_args)
 
 
@@ -44,8 +44,8 @@ def upload_users_to_bigquery():
 
 
 app.conf.beat_schedule = {
-    "dbt_run": {
-        "task": "etl.app.dbt_run",
+    "dbt_build": {
+        "task": "etl.app.dbt_build",
         "schedule": crontab(minute="0", hour="3")
     },
     "deals_to_bigquery": {
