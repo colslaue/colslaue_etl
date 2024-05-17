@@ -11,7 +11,7 @@ app = Celery("etl_scheduler", broker=CONFIG.CELERY_BROKER_URL)
 @app.task
 def dbt_run():
     dbt = dbtRunner()
-    cli_args = ["run"]
+    cli_args = ["run", "--target", "prod"]
     dbt.invoke(cli_args)
 
 
