@@ -53,7 +53,10 @@ def flatten_companies(data):
         flat_dict = {
             "id": result["id"],
             "createdate": result["properties"]["createdate"],
-            "name": result["properties"]["name"]
+            "name": result["properties"]["name"],
+            "annualrevenue": result["properties"]["annualrevenue"],
+            "hubspot_owner_id": result["properties"]["hubspot_owner_id"],
+            "country": result["properties"]["country"]
         }
         flattened_data.append(flat_dict)
     return flattened_data

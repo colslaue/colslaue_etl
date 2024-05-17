@@ -24,7 +24,7 @@ def upload_deals_to_bigquery():
 
 @app.task
 def upload_companies_to_bigquery():
-    company_data = hubspot.HubspotAPI.get_instance("/crm/v3/objects/companies").get_data()
+    company_data = hubspot.HubspotAPI.get_instance("/crm/v3/objects/companies?properties=createdate,name,hubspot_owner_id,annualrevenue,country").get_data()
     company_data = hubspot.flatten_companies(company_data)
     bigquery.upload_json_to_table(company_data, "hubspot.company")
 
