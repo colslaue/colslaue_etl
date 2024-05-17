@@ -1,5 +1,3 @@
-{{ config(schema='staging') }}
-
 WITH
 	primary_company AS(
 		SELECT
