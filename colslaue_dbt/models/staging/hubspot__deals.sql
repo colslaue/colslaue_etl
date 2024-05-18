@@ -22,5 +22,5 @@ SELECT
 FROM {{ source('hubspot', 'deal') }} AS deal
 LEFT JOIN {{ source('hubspot', 'user') }} AS user
 ON user.id = deal.hubspot_owner_id
-FULL OUTER JOIN primary_company AS company
+LEFT JOIN primary_company AS company
 ON company.deal_id = deal.id
