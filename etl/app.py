@@ -43,6 +43,13 @@ def upload_users_to_bigquery():
     bigquery.upload_json_to_table(user_data, "hubspot.user")
 
 
+@app.task
+def upload_contacts_to_bigquery():
+    contact_data = hubspot.HubspotAPI.get_instance("/crm/v3/objects/contacts?properties=firstname,lastname,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_customer_date,country,jobtitle").get_data()
+    contact_data = hubspot.flatten_contacts(contact_data)
+    bigquery.upload_json_to_table(contact_data, "hubspot.contact")
+
+
 app.conf.beat_schedule = {
     "dbt_build": {
         "task": "etl.app.dbt_build",
@@ -62,6 +69,10 @@ app.conf.beat_schedule = {
     },
     "users_to_bigquery": {
         "task": "etl.app.upload_users_to_bigquery",
+        "schedule": crontab()
+    },
+    "contacts_to_bigquery": {
+        "task": "etl.app.upload_contacts_to_bigquery",
         "schedule": crontab()
     }
 }
