@@ -18,3 +18,17 @@ models:
         description: 'primary key'
         tests:
           - unique
+  - name: hubspot__companies
+    description: 'all hubspot crm companies - one record per company'
+    columns:
+      - name: company_id
+        description: 'primary key'
+        tests:
+          - unique
+  - name: hubspot__users
+    description: 'all hubspot crm users - one record per user'
+    columns:
+      - name: user_id
+        description: 'primary key'
+        tests:
+          - unique
