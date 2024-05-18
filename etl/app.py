@@ -50,10 +50,31 @@ def upload_contacts_to_bigquery():
     bigquery.upload_json_to_table(contact_data, "hubspot.contact")
 
 
+@app.task
+def push_avg_deal_to_hubspot_company():
+    query = """
+        SELECT
+            company_id
+            ,average_deal_size
+        FROM `colslaue.report.hubspot__company_overview`
+    """
+    avg_deal = bigquery.BigQueryClient.get_instance().client.query(query).result().to_dataframe().to_dict(orient="records")
+    for row in avg_deal:
+        company = row["company_id"]
+        avg = row["average_deal_size"]
+        properties = {
+            "properties": {
+                "average_deal_size": f"{avg}"
+            }
+        }
+        data = hubspot.HubspotAPI.get_instance(f"/crm/v3/objects/companies/{company}")
+        data.push_data(properties)
+
+
 app.conf.beat_schedule = {
     "dbt_build": {
         "task": "etl.app.dbt_build",
-        "schedule": crontab(minute="0", hour="3")
+        "schedule": crontab()
     },
     "deals_to_bigquery": {
         "task": "etl.app.upload_deals_to_bigquery",
@@ -73,6 +94,10 @@ app.conf.beat_schedule = {
     },
     "contacts_to_bigquery": {
         "task": "etl.app.upload_contacts_to_bigquery",
+        "schedule": crontab()
+    },
+    "avg_deal_to_hubspot": {
+        "task": "etl.app.push_avg_deal_to_hubspot_company",
         "schedule": crontab()
     }
 }

@@ -29,6 +29,14 @@ class HubspotAPI:
             return e
         return response.json()
 
+    def push_data(self, data):
+        try:
+            response = requests.patch(self.full_url, headers=self.header, json=data)
+            response.raise_for_status()
+        except RequestException as e:
+            return e
+        return response.json()
+
 
 def flatten_deals(data):
     flattened_data = []

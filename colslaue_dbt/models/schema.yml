@@ -32,3 +32,9 @@ models:
         description: 'primary key'
         tests:
           - unique
+  - name: hubspot__company_overview
+    description: 'report table describing hubspot crm companies with aggregates'
+    columns:
+      - name: company_id
+        tests:
+          - unique
