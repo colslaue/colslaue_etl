@@ -87,3 +87,20 @@ def flatten_users(data):
         }
         flattened_data.append(flat_dict)
     return flattened_data
+
+
+def flatten_contacts(data):
+    flattened_data = []
+    for result in data["results"]:
+        flat_dict = {
+            "id": result["id"],
+            "firstname": result["properties"]["firstname"],
+            "lastname": result["properties"]["lastname"],
+            "hs_lifecyclestage_customer_date": result["properties"]["hs_lifecyclestage_customer_date"],
+            "hs_lifecyclestage_marketingqualifiedlead_date": result["properties"]["hs_lifecyclestage_marketingqualifiedlead_date"],
+            "hs_lifecyclestage_salesqualifiedlead_date": result["properties"]["hs_lifecyclestage_salesqualifiedlead_date"],
+            "country": result["properties"]["country"],
+            "jobtitle": result["properties"]["jobtitle"]
+        }
+        flattened_data.append(flat_dict)
+    return flattened_data
