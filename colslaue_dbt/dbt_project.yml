@@ -33,12 +33,15 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   colslaue_dbt:
     # Config indicated by + and applies to all files under models/example/
+    +hours_to_expiration: "{{ '72' if target.name == 'dev' else none }}"
+
     staging:
       +materialized: table
       +schema: "{{ 'staging' if target.name == 'prod' else target.schema }}"
       +persist_docs:
         relation: true
         columns: true
+
     report:
       +materialized: table
       +schema: "{{ 'report' if target.name == 'prod' else target.schema }}"
