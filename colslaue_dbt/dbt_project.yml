@@ -39,3 +39,9 @@ models:
       +persist_docs:
         relation: true
         columns: true
+    report:
+      +materialized: table
+      +schema: "{{ 'report' if target.name == 'prod' else target.schema }}"
+      +persist_docs:
+        relation: true
+        columns: true
