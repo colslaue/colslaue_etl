@@ -1,5 +1,6 @@
 import etl.connectors.bigquery as bigquery
 import etl.connectors.hubspot as hubspot
+import math
 from celery import Celery
 from celery.schedules import crontab
 from config import CONFIG
@@ -59,16 +60,23 @@ def push_avg_deal_to_hubspot_company():
         FROM `colslaue.report.hubspot__company_overview`
     """
     avg_deal = bigquery.BigQueryClient.get_instance().client.query(query).result().to_dataframe().to_dict(orient="records")
+    inputs = []
     for row in avg_deal:
-        company = row["company_id"]
         avg = row["average_deal_size"]
-        properties = {
+        if math.isnan(avg):
+            continue
+        company = str(row["company_id"])
+        inputs.append({
+            "id": f"{company}",
             "properties": {
                 "average_deal_size": f"{avg}"
             }
-        }
-        data = hubspot.HubspotAPI.get_instance(f"/crm/v3/objects/companies/{company}")
-        data.push_data(properties)
+        })
+    client = hubspot.HubspotAPI.get_instance(f"/crm/v3/objects/companies/batch/update")
+    page_size = 100
+    for page in range(0, len(inputs), page_size):
+        paged_inputs = {'inputs': inputs[page: page + page_size]}
+        client.push_data(paged_inputs)
 
 
 app.conf.beat_schedule = {
