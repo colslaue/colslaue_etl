@@ -31,7 +31,7 @@ class HubspotAPI:
 
     def push_data(self, data):
         try:
-            response = requests.patch(self.full_url, headers=self.header, json=data)
+            response = requests.post(self.full_url, headers=self.header, json=data)
             response.raise_for_status()
         except RequestException as e:
             return e
