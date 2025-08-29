@@ -1,4 +1,3 @@
-from config import CONFIG
 from google.cloud import bigquery
 
 class BigQueryClient:
@@ -6,7 +5,7 @@ class BigQueryClient:
     client = None
 
     def __init__(self):
-        self.client = bigquery.Client.from_service_account_json(CONFIG.GOOGLE_APPLICATION_CREDENTIALS)
+        self.client = bigquery.Client()
 
     @classmethod
     def get_instance(cls):
