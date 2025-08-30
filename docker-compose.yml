@@ -2,7 +2,7 @@ services:
   redis:
     image: "redis:alpine"
 
-  worker:
+  celery-worker:
     build: .
     command: celery -A workers.tasks worker -l info
     volumes:
@@ -10,7 +10,7 @@ services:
     depends_on:
       - redis
 
-  beat:
+  celery-beat:
     build: .
     command: celery -A app beat -l info
     volumes:
