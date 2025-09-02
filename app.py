@@ -12,7 +12,7 @@ app.conf.beat_schedule = {
     'hubspot_deals_to_bigquery': {
         'task': 'hubspot_deals_to_bigquery',
         'schedule': crontab(
-            minute=0, hour=0
+            minute=*,
         )
     },
 }
