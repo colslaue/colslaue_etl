@@ -27,17 +27,17 @@ jobs:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
-          ssh $GCP_USER@$GCP_IP << EOF
+          ssh $GCP_USER@$GCP_IP << 'EOF'
             cd /home/colslaue_etl
-
+            
             git pull
-
-            docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_TOKEN"
-
+            
+            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            
             docker compose pull
-
+            
             docker compose up -d --force-recreate
-
+            
             docker image prune -f
-          
+            
           EOF
