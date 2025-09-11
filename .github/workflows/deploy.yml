@@ -28,7 +28,7 @@ jobs:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
         run: |
           ssh $GCP_USER@$GCP_IP << EOF
-            cd /home/colslaue_etl
+            cd /home/colslaue_etl/colslaue_etl
 
             git pull
 
