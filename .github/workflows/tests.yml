@@ -22,7 +22,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
-          python -m pip install --upgrade pytest
 
       - name: run_pytest
-        run: pytest --no-tests-found-exit-code=0
+        run: pytest
