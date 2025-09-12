@@ -18,4 +18,4 @@ jobs:
           ssh-keyscan ${{ secrets.GCP_IP }} >> ~/.ssh/known_hosts
 
       - name: deploy
-        run: ssh -i ~/.ssh/id_ed25519 echo "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' <<< echo "test"
+        run: ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' <<< "echo test"
