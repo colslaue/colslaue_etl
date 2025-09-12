@@ -30,6 +30,7 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/colslaue_etl:${{ steps.vars.outputs.sha_short }}
 
   deploy:
+    needs: build_and_push
     runs-on: ubuntu-latest
 
     steps:
