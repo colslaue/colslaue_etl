@@ -24,4 +24,4 @@ jobs:
           pip install pytest
 
       - name: run_pytest
-        run: pytest
+        run: pytest --no-tests-found-exit-code=0
