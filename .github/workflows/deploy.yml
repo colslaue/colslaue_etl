@@ -44,6 +44,7 @@ jobs:
       - name: deploy
         run: |
           ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' <<< '
+          export IMAGE_TAG=${{ needs.build_and_push.outputs.image_tag }}
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           cd /home/colslaue_etl/colslaue_etl
           git pull origin main

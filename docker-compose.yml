@@ -3,7 +3,7 @@ services:
     image: "redis:alpine"
 
   celery-worker:
-    image: "colslaue/colslaue_etl:latest"
+    image: "colslaue/colslaue_etl:${IMAGE_TAG}"
     command: celery -A workers.tasks worker -l info
     volumes:
       - .:/app
@@ -11,7 +11,7 @@ services:
       - redis
 
   celery-beat:
-    image: "colslaue/colslaue_etl:latest"
+    image: "colslaue/colslaue_etl:${IMAGE_TAG}"
     command: celery -A app beat -l info
     volumes:
       - .:/app
