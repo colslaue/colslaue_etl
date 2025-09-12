@@ -10,35 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
       - name: ssh_key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan ${{ secrets.GCP_IP }} >> ~/.ssh/known_hosts
-          echo "StrictHostKeyChecking no" >> ~/.ssh/config
-          echo "UserKnownHostsFile ~/.ssh/known_hosts" >> ~/.ssh/config
 
       - name: deploy
-        env:
-          GCP_USER: ${{ secrets.GCP_USER }}
-          GCP_IP: ${{ secrets.GCP_IP }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: |
-          ssh $GCP_USER@$GCP_IP << EOF
-            cd /home/colslaue_etl/colslaue_etl
-
-            git pull
-
-            echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-          
-            docker compose pull
-          
-            docker compose up -d --force-recreate
-          
-            docker image prune -f
-          EOF
+        run: ssh -i ~/.ssh/id_ed25519 echo "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' <<< echo "test"
