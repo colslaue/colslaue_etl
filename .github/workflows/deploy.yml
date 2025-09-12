@@ -25,12 +25,9 @@ jobs:
           password: "${{ secrets.DOCKERHUB_TOKEN }}"
       - name: deploy
         run: |
-          ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' << 'EOF'
-          cd /home/colslaue_etl/colslaue_etl
-          
-          git pull origin main
-          
-          docker compose pull
-          
-          docker compose up -d
-      EOF
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' <<< '
+          cd /home/colslaue_etl/colslaue_etl \
+          git pull origin main \
+          docker compose pull \
+          docker compose up -d \
+        '
