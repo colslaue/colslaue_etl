@@ -26,8 +26,8 @@ jobs:
       - name: deploy
         run: |
           ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' <<< '
-          cd /home/colslaue_etl/colslaue_etl \
-          git pull origin main \
-          docker compose pull \
-          docker compose up -d \
+          cd /home/colslaue_etl/colslaue_etl
+          git pull origin main
+          docker compose pull
+          docker compose up -d
         '
