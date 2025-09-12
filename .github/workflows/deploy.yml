@@ -10,12 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: ssh_key
+      - name: ssh_key setup
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan ${{ secrets.GCP_IP }} >> ~/.ssh/known_hosts
 
+
+      - name: login to docker hub
+        uses: docker/login-action@v3
+        with:
+          username: "${{ secrets.DOCKERHUB_USERNAME }}"
+          password: "${{ secrets.DOCKERHUB_TOKEN }}"
       - name: deploy
-        run: ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' <<< "echo test"
+        run: |
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' << 'EOF'
+          cd /home/colslaue_etl/colslaue_etl
+          
+          git pull origin main
+          
+          docker compose pull
+          
+          docker compose up -d
+        EOF
