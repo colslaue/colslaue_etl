@@ -1,0 +1,4 @@
+.venv
+.env
+bq_credentials.json
+__pycache__
