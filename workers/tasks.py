@@ -36,3 +36,6 @@ def hubspot_deals_to_bigquery():
         destination=f"{CONFIG.BIGQUERY_PROJECT}.{CONFIG.BIGQUERY_HUBSPOT_DATASET}.deal",
         job_config=job_config
     )
+
+def test_diff_cov():
+    print("hello, world")
