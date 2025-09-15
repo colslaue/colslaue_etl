@@ -51,3 +51,5 @@ class TestHubspotDealsToBigQuery(unittest.TestCase):
 
 def test_diff():
     print("hello, world")
+    test = "hello"
+    test2 = "world"
