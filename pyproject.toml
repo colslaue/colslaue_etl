@@ -1,7 +1,5 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-
-[tool.pytest.ini_options]
 addopts = "--cov-report=xml --cov=colslaue_etl"
 
 [tool.coverage.run]
