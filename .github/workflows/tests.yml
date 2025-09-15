@@ -25,3 +25,16 @@ jobs:
 
       - name: run_pytest
         run: pytest
+
+  diff_coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Run tests and generate coverage XML
+        run: |
+          pytest --cov=colslaue_etl --cov-report=xml:coverage.xml
+      - name: Run diff-cover and check for new uncovered lines
+        run: |
+          diff-cover coverage.xml --fail-under=100 --diff-against origin/${{ github.base_ref }}
