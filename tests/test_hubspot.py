@@ -48,8 +48,3 @@ class TestHubspotDealsToBigQuery(unittest.TestCase):
             destination=expected_table_id,
             job_config=ANY,
         )
-
-def test_diff():
-    print("hello, world")
-    test = "hello"
-    test2 = "world"
