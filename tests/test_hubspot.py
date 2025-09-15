@@ -1,4 +1,4 @@
-from workers.tasks import (
+from colslaue_etl.workers.tasks import (
     hubspot_deals_to_bigquery,
 )
 import unittest
