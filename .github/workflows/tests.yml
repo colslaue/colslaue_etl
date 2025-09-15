@@ -45,4 +45,4 @@ jobs:
           pytest --cov=colslaue_etl --cov-report=xml:coverage.xml
       - name: Run diff-cover and check for new uncovered lines
         run: |
-          diff-cover coverage.xml --fail-under=100 --diff-against origin/${{ github.base_ref }}
+          diff-cover coverage.xml --fail-under=100 --compare-branch origin/${{ github.base_ref }}
