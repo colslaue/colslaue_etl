@@ -67,7 +67,7 @@ jobs:
 
       - name: lint
         run: |
-          black --check
+          black . --check
 
   build_image:
     needs: [run_pytest, diff_coverage]
