@@ -6,9 +6,9 @@ from unittest.mock import Mock, patch, ANY
 
 
 class TestHubspotDealsToBigQuery(unittest.TestCase):
-    @patch('workers.tasks.HubspotConn')
-    @patch('workers.tasks.BigQueryClient')
-    @patch('workers.tasks.CONFIG')
+    @patch("workers.tasks.HubspotConn")
+    @patch("workers.tasks.BigQueryClient")
+    @patch("workers.tasks.CONFIG")
     def test_export_logic_with_mocks(
         self, mock_CONFIG, mock_BigQueryClient, mock_HubspotConn
     ):
@@ -19,12 +19,21 @@ class TestHubspotDealsToBigQuery(unittest.TestCase):
         mock_CONFIG.GOOGLE_APPLICATION_CREDENTIALS = "google_application_credentials"
         mock_session = mock_HubspotConn.return_value.get_instance.return_value
         mock_session.crm.deals.basic_api.get_page.return_value = Mock(
-            to_dict=lambda: {'results': [
-                {'id': 12345, 'properties': {'amount': 123.45, 'dealname': 'deal name', 'dealstage': 'deal stage', 'pipeline': 'pipeline'}}
-            ]}
+            to_dict=lambda: {
+                "results": [
+                    {
+                        "id": 12345,
+                        "properties": {
+                            "amount": 123.45,
+                            "dealname": "deal name",
+                            "dealstage": "deal stage",
+                            "pipeline": "pipeline",
+                        },
+                    }
+                ]
+            }
         )
         mock_bq_client = mock_BigQueryClient.return_value.get_instance.return_value
-
 
         hubspot_deals_to_bigquery()
 
@@ -40,9 +49,7 @@ class TestHubspotDealsToBigQuery(unittest.TestCase):
             }
         ]
 
-        expected_table_id = (
-            f"{mock_CONFIG.BIGQUERY_PROJECT}.{mock_CONFIG.BIGQUERY_HUBSPOT_DATASET}.deal"
-        )
+        expected_table_id = f"{mock_CONFIG.BIGQUERY_PROJECT}.{mock_CONFIG.BIGQUERY_HUBSPOT_DATASET}.deal"
         mock_bq_client.load_table_from_json.assert_called_once_with(
             json_rows=expected_output,
             destination=expected_table_id,
