@@ -42,7 +42,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run tests and generate coverage XML
         run: |
-          pytest --cov=workers --cov-report=xml:coverage.xml
+          pytest --cov=. tests/ --cov-report=xml:coverage.xml
       - name: Fetch base branch
         run: git fetch origin ${{ github.base_ref }}
       - name: Run diff-cover and check for new uncovered lines
