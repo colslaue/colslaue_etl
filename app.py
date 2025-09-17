@@ -15,4 +15,10 @@ app.conf.beat_schedule = {
             minute="*",
         ),
     },
+    "hubspot_companies_to_bigquery": {
+        "task": "hubspot_companies_to_bigquery",
+        "schedule": crontab(
+            minute="*",
+        ),
+    },
 }
