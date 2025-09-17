@@ -1,6 +1,6 @@
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov-report=xml --cov=colslaue_etl"
+addopts = "--cov-report=xml --cov=. tests/"
 
 [tool.coverage.run]
 branch = true
