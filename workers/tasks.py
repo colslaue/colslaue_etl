@@ -40,7 +40,7 @@ def hubspot_deals_to_bigquery():
 
 @app.task(name="hubspot_companies_to_bigquery")
 def hubspot_companies_to_bigquery():
-    hubspot = HubspotConn.get_instance()
+    hubspot = HubspotConn().get_instance()
     data = hubspot.crm.companies.basic_api.get_page(limit=10, archived=False)
     dict = data.to_dict().get("results")
 
