@@ -1,5 +1,6 @@
 from google.cloud import bigquery
 
+
 class BigQueryClient:
     _singleton = None
     client = None

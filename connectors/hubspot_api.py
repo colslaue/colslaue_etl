@@ -1,6 +1,7 @@
 from config import CONFIG
 import hubspot
 
+
 class HubspotConn:
     _singleton = None
     conn = None
