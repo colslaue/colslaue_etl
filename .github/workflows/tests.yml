@@ -70,7 +70,7 @@ jobs:
           black . --check
 
   build_image:
-    needs: [run_pytest, diff_coverage]
+    needs: [run_pytest, diff_coverage, lint]
     runs-on: ubuntu-latest
     steps:
       - name: checkout
