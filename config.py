@@ -18,7 +18,7 @@ def get_secret(secret_id):
 
 
 class Config:
-    GOOGLE_APPLICATION_CREDENTIALS = get_secret("google_application_credentials")
+    GOOGLE_APPLICATION_CREDENTIALS = get_secret("google_cloud_credentials")
     HUBSPOT_API_KEY = get_secret("hubspot_api_key")
     BIGQUERY_PROJECT = os.environ.get("BIGQUERY_PROJECT")
     BIGQUERY_HUBSPOT_DATASET = os.environ.get("BIGQUERY_HUBSPOT_DATASET")
