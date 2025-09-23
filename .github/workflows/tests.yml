@@ -27,6 +27,9 @@ jobs:
           pip install -r requirements.txt
           pip install pytest
 
+      - name: Verify Environment Variable
+        run: echo $ENV
+
       - name: run_pytest
         run: pytest
 
