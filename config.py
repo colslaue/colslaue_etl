@@ -29,3 +29,6 @@ class ConfigDEV:
 
 
 CONFIG = ConfigDEV() if os.environ.get("ENV") == "DEV" else Config()
+
+env = os.environ.get("ENV")
+print(env)
