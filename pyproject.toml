@@ -5,3 +5,6 @@ addopts = "--cov-report=xml --cov=. tests/"
 [tool.coverage.run]
 branch = true
 source = ["colslaue_etl"]
+omit = [
+    "config.py"
+]
