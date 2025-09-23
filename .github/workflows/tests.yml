@@ -8,6 +8,10 @@ on:
 jobs:
   run_pytest:
     runs-on: ubuntu-latest
+
+    env:
+      ENV: DEV
+
     steps:
       - name: checkout
         uses: actions/checkout@v4
@@ -28,6 +32,10 @@ jobs:
 
   diff_coverage:
     runs-on: ubuntu-latest
+
+    env:
+      ENV: DEV
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -51,6 +59,10 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+
+    env:
+      ENV: DEV
+
     steps:
       - name: checkout
         uses: actions/checkout@v4
