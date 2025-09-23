@@ -19,10 +19,10 @@ def get_secret(secret_id):
 
 class Config:
     def __init__(self):
-        GOOGLE_APPLICATION_CREDENTIALS = get_secret("google_cloud_credentials")
-        HUBSPOT_API_KEY = get_secret("hubspot_api_key")
-        BIGQUERY_PROJECT = get_secret("bigquery_project")
-        BIGQUERY_HUBSPOT_DATASET = get_secret("bigquery_hubspot_dataset")
+        self.GOOGLE_APPLICATION_CREDENTIALS = get_secret("google_cloud_credentials")
+        self.HUBSPOT_API_KEY = get_secret("hubspot_api_key")
+        self.BIGQUERY_PROJECT = get_secret("bigquery_project")
+        self.BIGQUERY_HUBSPOT_DATASET = get_secret("bigquery_hubspot_dataset")
 
 
 class ConfigDEV:
