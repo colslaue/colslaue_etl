@@ -64,3 +64,6 @@ def hubspot_companies_to_bigquery():
         destination=f"{CONFIG.BIGQUERY_PROJECT}.{CONFIG.BIGQUERY_HUBSPOT_DATASET}.company",
         job_config=job_config,
     )
+
+def test():
+    print("hello, world")
