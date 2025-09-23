@@ -24,4 +24,8 @@ class Config:
     BIGQUERY_HUBSPOT_DATASET = get_secret("bigquery_hubspot_dataset")
 
 
-CONFIG = Config()
+class ConfigDEV:
+    pass
+
+
+CONFIG = ConfigDEV() if os.environ.get("ENV") == "DEV" else Config()
