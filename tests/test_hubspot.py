@@ -1,5 +1,5 @@
 from workers.tasks import (
-    # hubspot_deals_to_bigquery,
+    hubspot_deals_to_bigquery,
     hubspot_companies_to_bigquery,
 )
 import unittest
