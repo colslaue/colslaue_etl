@@ -49,5 +49,5 @@ jobs:
           cd /home/colslaue_etl/colslaue_etl
           git pull origin main
           docker compose pull
-          docker compose up -d
+          docker compose up -d --force-recreate
           '
