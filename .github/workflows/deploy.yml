@@ -36,11 +36,13 @@ jobs:
 
     steps:
       - name: ssh_key_setup
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan ${{ secrets.GCP_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.GCP_IP }} >> ~/.ssh/known_hosts
 
       - name: deploy
         run: |
