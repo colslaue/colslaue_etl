@@ -37,17 +37,19 @@ jobs:
       - name: ssh_key_setup
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          cat <<EOF > ~/.ssh/id_ed25519
+          ${{ secrets.SSH_PRIVATE_KEY }}
+          EOF
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan ${{ secrets.GCP_IP }} >> ~/.ssh/known_hosts
 
       - name: deploy
         run: |
-          ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' <<< '
+          ssh -i ~/.ssh/id_ed25519 "${{ secrets.GCP_USER }}"@"${{ secrets.GCP_IP }}" 'bash -s' << 'EOF'
           export IMAGE_TAG=${{ needs.build_and_push_image.outputs.image_tag }}
           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
           cd /home/colslaue_etl/colslaue_etl
           git pull origin main
           docker compose pull
           docker compose up -d --force-recreate
-          '
+          EOF
