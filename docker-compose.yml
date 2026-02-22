@@ -5,6 +5,8 @@ services:
   celery-worker:
     image: "colslaue/colslaue_etl:${IMAGE_TAG}"
     command: celery -A workers.tasks worker -l info
+    env_file:
+      - .env
     volumes:
       - .:/app
     depends_on:
@@ -13,6 +15,8 @@ services:
   celery-beat:
     image: "colslaue/colslaue_etl:${IMAGE_TAG}"
     command: celery -A app beat -l info
+    env_file:
+      - .env
     volumes:
       - .:/app
     depends_on:
