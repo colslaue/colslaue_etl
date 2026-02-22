@@ -1,4 +1,10 @@
-.venv
+.venv/
 .env
-bq_credentials.json
+.github/
+celerybeat-schedule
+colslaue-credentials.json
 __pycache__
+docker-compose.yml
+docker-compose.override.yml
+.git
+.gitignore
