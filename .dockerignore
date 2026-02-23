@@ -2,10 +2,11 @@
 .env
 .github/
 celerybeat-schedule
-colslaue-credentials.json
-__pycache__
+prod-credentials.json
 docker-compose.yml
 docker-compose.override.yml
 .git
 .gitignore
 .dockerignore
+**/__pycache__/
+.idea/

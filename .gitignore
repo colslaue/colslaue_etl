@@ -1,0 +1,7 @@
+prod-credentials.json
+docker-compose.override.yml
+celerybeat-schedule
+.venv/
+.env
+**/__pycache__/
+.idea/
