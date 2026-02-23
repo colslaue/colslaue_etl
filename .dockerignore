@@ -3,7 +3,6 @@
 .github/
 celerybeat-schedule
 prod-credentials.json
-__pycache__
 docker-compose.yml
 docker-compose.override.yml
 .git
