@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.12-slim
 
 ENV POETRY_VERSION=2.3.2
 RUN pip install "poetry==$POETRY_VERSION"
@@ -10,6 +10,6 @@ ENTRYPOINT []
 COPY pyproject.toml poetry.lock ./
 
 RUN poetry config virtualenvs.create false \
-    && poetry install --without dev --no-interaction --no-ansi --no-root
+    && poetry install --without dev --no-interaction --no-ansi
 
 COPY . .

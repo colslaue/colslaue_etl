@@ -29,7 +29,7 @@ jobs:
         run: poetry config virtualenvs.in-project true
 
       - name: install dependencies
-        run: poetry install --no-interaction --no-ansi --no-root
+        run: poetry install --no-interaction --no-ansi
 
       - name: run_pytest
         run: poetry run pytest
@@ -57,7 +57,7 @@ jobs:
         run: poetry config virtualenvs.in-project true
 
       - name: install dependencies
-        run: poetry install --no-interaction --no-ansi --no-root
+        run: poetry install --no-interaction --no-ansi
 
       - name: Run tests and generate coverage XML
         run: |
@@ -92,7 +92,7 @@ jobs:
         run: poetry config virtualenvs.in-project true
 
       - name: install dependencies
-        run: poetry install --no-interaction --no-ansi --no-root
+        run: poetry install --no-interaction --no-ansi
 
       - name: lint
         run: |
