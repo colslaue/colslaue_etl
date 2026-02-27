@@ -36,7 +36,11 @@ def test_get_deals_single_page_yields_one_dataframe(mock_config, mock_session_cl
         "results": [
             {
                 "id": "1",
-                "properties": {"amount": "100", "dealname": "Deal A", "hs_object_id": "111"},
+                "properties": {
+                    "amount": "100",
+                    "dealname": "Deal A",
+                    "hs_object_id": "111",
+                },
             },
         ],
         "paging": {},
@@ -97,7 +101,10 @@ def test_get_deals_multiple_pages_follows_next_link(mock_config, mock_session_cl
     assert pages[0].iloc[0]["amount"] == "100"
     assert pages[1].iloc[0]["amount"] == "200"
     assert mock_session.get.call_count == 2
-    assert mock_session.get.call_args_list[1][1]["url"] == "https://api.hubapi.com/next-page"
+    assert (
+        mock_session.get.call_args_list[1][1]["url"]
+        == "https://api.hubapi.com/next-page"
+    )
 
 
 @patch("connectors.hubspot_api.requests.Session")
