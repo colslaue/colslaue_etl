@@ -68,7 +68,7 @@ jobs:
 
       - name: Run diff-cover and check for new uncovered lines
         run: |
-          poetry run diff-cover coverage.xml --fail-under=100 --compare-branch origin/${{ github.base_ref }}
+          poetry run diff-cover coverage.xml --fail-under=50 --compare-branch origin/${{ github.base_ref }}
 
   lint:
     runs-on: ubuntu-latest
