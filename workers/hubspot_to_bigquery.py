@@ -11,24 +11,18 @@ def hubspot_export_deals_to_bigquery():
 
     properties = [
         'amount',
-        'closedate',
-        'createdate',
         'dealname',
         'hs_object_id'
     ]
 
     dtypes = {
-        "amount": "float",
-        "closedate": "datetime64[ns]",
-        "createdate": "datetime64[ns]",
+        "amount": "string",
         "dealname": "string",
-        "hs_object_id": "int64"
+        "hs_object_id": "string"
     }
 
     schema = [
         SchemaField('amount', 'NUMERIC'),
-        SchemaField('closedate', 'DATETIME'),
-        SchemaField('createdate', 'DATETIME'),
         SchemaField('dealname', 'STRING'),
         SchemaField('hs_object_id', 'INT64'),
     ]
@@ -39,8 +33,8 @@ def hubspot_export_deals_to_bigquery():
 
     for df in hubspot_conn.get_deals(
         properties=properties,
-        history=False
     ):
+        df = df.astype(dtypes)
         write_disposition = "WRITE_TRUNCATE" if last_df is None else "WRITE_APPEND"
 
         last_df = bigquery_conn.upload_df(

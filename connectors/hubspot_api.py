@@ -36,9 +36,9 @@ class HubspotConn:
 
             yield session
 
-    def get_deals(self, properties: list = None, history: bool = False):
-        properties = ",".join(properties)
-        url: str | None = f"{self._base_url}/objects/0-3?properties={properties}&propertiesWithHistory={properties}&limit=1"
+    def get_deals(self, properties: list = None):
+        fields = ",".join(properties)
+        url: str | None = f"{self._base_url}/objects/0-3?properties={fields}&limit=1"
         headers = self._headers
         timeout = self._timeout
 
@@ -54,6 +54,8 @@ class HubspotConn:
                         break
 
                     df = pd.DataFrame(results)
+                    df = pd.json_normalize(df["properties"])
+                    df = df[properties]
 
                     # get next page if it exists otherwise return None to end the loop
                     paging = data.get('paging')
@@ -67,13 +69,3 @@ class HubspotConn:
                 except Exception as e:
                     logging.error(e)
                     raise
-
-def test():
-    conn = HubspotConn.get_instance()
-    properties = [
-        'dealname',
-        'amount'
-    ]
-    data = conn.get_deals(properties=properties, history=True)
-    for page in data:
-        print(page.to_dict())
