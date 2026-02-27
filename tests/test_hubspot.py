@@ -1,76 +1,122 @@
 import pandas as pd
-import pytest
 from unittest.mock import MagicMock, patch
 
-from workers.hubspot_to_bigquery import hubspot_export_deals_to_bigquery
+import pytest
+
+from connectors.hubspot_api import HubspotConn
 
 
-@patch("workers.hubspot_to_bigquery.CONFIG")
-@patch("workers.hubspot_to_bigquery.BigQueryClient")
-@patch("workers.hubspot_to_bigquery.HubspotConn")
-def test_hubspot_export_deals_to_bigquery_single_page(
-    mock_hubspot_conn_cls,
-    mock_bigquery_client_cls,
-    mock_config,
-):
-    """Single page of deals: get_deals yields one DataFrame, upload_df called once with WRITE_TRUNCATE."""
-    mock_config.BIGQUERY_PROJECT = "test-project"
-    mock_config.BIGQUERY_HUBSPOT_DATASET = "test_dataset"
-
-    mock_hubspot = MagicMock()
-    single_df = pd.DataFrame(
-        {
-            "amount": ["100"],
-            "dealname": ["Deal One"],
-            "hs_object_id": ["12345"],
-        }
-    )
-    mock_hubspot.get_deals.return_value = iter([single_df])
-    mock_hubspot_conn_cls.get_instance.return_value = mock_hubspot
-
-    mock_bq = MagicMock()
-    mock_bigquery_client_cls.get_instance.return_value = mock_bq
-
-    hubspot_export_deals_to_bigquery()
-
-    mock_hubspot.get_deals.assert_called_once_with(properties=["amount", "dealname", "hs_object_id"])
-    assert mock_bq.upload_df.call_count == 1
-    call_kw = mock_bq.upload_df.call_args[1]
-    assert call_kw["destination_table"] == "test-project.test_dataset.deal"
-    assert call_kw["write_disposition"] == "WRITE_TRUNCATE"
-    assert len(call_kw["schema"]) == 3
+@pytest.fixture(autouse=True)
+def reset_singleton():
+    """Reset HubspotConn singleton so each test gets a fresh instance."""
+    yield
+    HubspotConn._singleton = None
 
 
-@patch("workers.hubspot_to_bigquery.CONFIG")
-@patch("workers.hubspot_to_bigquery.BigQueryClient")
-@patch("workers.hubspot_to_bigquery.HubspotConn")
-def test_hubspot_export_deals_to_bigquery_multiple_pages(
-    mock_hubspot_conn_cls,
-    mock_bigquery_client_cls,
-    mock_config,
-):
-    """Multiple pages: first upload WRITE_TRUNCATE, second WRITE_APPEND."""
-    mock_config.BIGQUERY_PROJECT = "test-project"
-    mock_config.BIGQUERY_HUBSPOT_DATASET = "test_dataset"
+@patch("connectors.hubspot_api.CONFIG")
+def test_get_instance_returns_singleton(mock_config):
+    """get_instance returns the same instance on multiple calls."""
+    mock_config.HUBSPOT_API_KEY = "test-key"
+    HubspotConn._singleton = None
+    a = HubspotConn.get_instance()
+    b = HubspotConn.get_instance()
+    assert a is b
 
-    mock_hubspot = MagicMock()
-    page1 = pd.DataFrame(
-        {"amount": ["100"], "dealname": ["Deal One"], "hs_object_id": ["111"]}
-    )
-    page2 = pd.DataFrame(
-        {"amount": ["200"], "dealname": ["Deal Two"], "hs_object_id": ["222"]}
-    )
-    mock_hubspot.get_deals.return_value = iter([page1, page2])
-    mock_hubspot_conn_cls.get_instance.return_value = mock_hubspot
 
-    mock_bq = MagicMock()
-    mock_bigquery_client_cls.get_instance.return_value = mock_bq
+@patch("connectors.hubspot_api.requests.Session")
+@patch("connectors.hubspot_api.CONFIG")
+def test_get_deals_single_page_yields_one_dataframe(mock_config, mock_session_cls):
+    """get_deals with one page yields a single DataFrame with requested properties."""
+    mock_config.HUBSPOT_API_KEY = "test-key"
+    HubspotConn._singleton = None
 
-    hubspot_export_deals_to_bigquery()
+    mock_response = MagicMock()
+    mock_response.raise_for_status = MagicMock()
+    mock_response.json.return_value = {
+        "results": [
+            {
+                "id": "1",
+                "properties": {"amount": "100", "dealname": "Deal A", "hs_object_id": "111"},
+            },
+        ],
+        "paging": {},
+    }
+    mock_session = MagicMock()
+    mock_session.get.return_value = mock_response
+    mock_session_cls.return_value.__enter__.return_value = mock_session
+    mock_session_cls.return_value.__exit__.return_value = None
 
-    assert mock_bq.upload_df.call_count == 2
-    first_call = mock_bq.upload_df.call_args_list[0][1]
-    second_call = mock_bq.upload_df.call_args_list[1][1]
-    assert first_call["write_disposition"] == "WRITE_TRUNCATE"
-    assert second_call["write_disposition"] == "WRITE_APPEND"
-    assert first_call["destination_table"] == second_call["destination_table"] == "test-project.test_dataset.deal"
+    conn = HubspotConn.get_instance()
+    pages = list(conn.get_deals(properties=["amount", "dealname", "hs_object_id"]))
+
+    assert len(pages) == 1
+    df = pages[0]
+    assert list(df.columns) == ["amount", "dealname", "hs_object_id"]
+    assert len(df) == 1
+    assert df.iloc[0]["amount"] == "100"
+    assert df.iloc[0]["dealname"] == "Deal A"
+    assert df.iloc[0]["hs_object_id"] == "111"
+
+    mock_session.get.assert_called_once()
+    call_url = mock_session.get.call_args[1]["url"]
+    assert "amount,dealname,hs_object_id" in call_url
+    assert "objects/0-3" in call_url
+
+
+@patch("connectors.hubspot_api.requests.Session")
+@patch("connectors.hubspot_api.CONFIG")
+def test_get_deals_multiple_pages_follows_next_link(mock_config, mock_session_cls):
+    """get_deals with paging yields multiple DataFrames and follows paging.next.link."""
+    mock_config.HUBSPOT_API_KEY = "test-key"
+    HubspotConn._singleton = None
+
+    def response_for(url, **kwargs):
+        resp = MagicMock()
+        resp.raise_for_status = MagicMock()
+        if url == "https://api.hubapi.com/crm/v3/objects/0-3?properties=amount&limit=1":
+            resp.json.return_value = {
+                "results": [{"id": "1", "properties": {"amount": "100"}}],
+                "paging": {"next": {"link": "https://api.hubapi.com/next-page"}},
+            }
+        else:
+            resp.json.return_value = {
+                "results": [{"id": "2", "properties": {"amount": "200"}}],
+                "paging": {},
+            }
+        return resp
+
+    mock_session = MagicMock()
+    mock_session.get.side_effect = response_for
+    mock_session_cls.return_value.__enter__.return_value = mock_session
+    mock_session_cls.return_value.__exit__.return_value = None
+
+    conn = HubspotConn.get_instance()
+    pages = list(conn.get_deals(properties=["amount"]))
+
+    assert len(pages) == 2
+    assert pages[0].iloc[0]["amount"] == "100"
+    assert pages[1].iloc[0]["amount"] == "200"
+    assert mock_session.get.call_count == 2
+    assert mock_session.get.call_args_list[1][1]["url"] == "https://api.hubapi.com/next-page"
+
+
+@patch("connectors.hubspot_api.requests.Session")
+@patch("connectors.hubspot_api.CONFIG")
+def test_get_deals_empty_results_stops(mock_config, mock_session_cls):
+    """get_deals with no results yields nothing and does not loop."""
+    mock_config.HUBSPOT_API_KEY = "test-key"
+    HubspotConn._singleton = None
+
+    mock_response = MagicMock()
+    mock_response.raise_for_status = MagicMock()
+    mock_response.json.return_value = {"results": [], "paging": {}}
+    mock_session = MagicMock()
+    mock_session.get.return_value = mock_response
+    mock_session_cls.return_value.__enter__.return_value = mock_session
+    mock_session_cls.return_value.__exit__.return_value = None
+
+    conn = HubspotConn.get_instance()
+    pages = list(conn.get_deals(properties=["amount"]))
+
+    assert len(pages) == 0
+    mock_session.get.assert_called_once()
