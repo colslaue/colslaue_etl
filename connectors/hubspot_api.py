@@ -11,8 +11,8 @@ class HubspotConn:
     _singleton = None
 
     def __init__(self):
-        self._base_url = 'https://api.hubapi.com/crm/v3'
-        self._headers = {'Authorization': f'Bearer {CONFIG.HUBSPOT_API_KEY}'}
+        self._base_url = "https://api.hubapi.com/crm/v3"
+        self._headers = {"Authorization": f"Bearer {CONFIG.HUBSPOT_API_KEY}"}
         self._timeout = (5, 30)
 
     @classmethod
@@ -32,7 +32,7 @@ class HubspotConn:
                 status_forcelist=[429, 500, 502, 503, 504],
             )
 
-            session.mount('https://', HTTPAdapter(max_retries=retries))
+            session.mount("https://", HTTPAdapter(max_retries=retries))
 
             yield session
 
@@ -49,7 +49,7 @@ class HubspotConn:
                     response.raise_for_status()
                     data = response.json()
 
-                    results = data.get('results')
+                    results = data.get("results")
                     if not results:
                         break
 
@@ -58,9 +58,9 @@ class HubspotConn:
                     df = df[properties]
 
                     # get next page if it exists otherwise return None to end the loop
-                    paging = data.get('paging')
-                    if paging and 'next' in paging:
-                        url = paging['next'].get('link')
+                    paging = data.get("paging")
+                    if paging and "next" in paging:
+                        url = paging["next"].get("link")
                     else:
                         url = None
 

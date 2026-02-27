@@ -4,30 +4,25 @@ from connectors.hubspot_api import HubspotConn
 from config import CONFIG
 from google.cloud.bigquery import SchemaField
 
+
 @app.task(name="hubspot_export_deals_to_bigquery")
 def hubspot_export_deals_to_bigquery():
     hubspot_conn = HubspotConn.get_instance()
     bigquery_conn = BigQueryClient.get_instance()
 
-    properties = [
-        'amount',
-        'dealname',
-        'hs_object_id'
-    ]
+    properties = ["amount", "dealname", "hs_object_id"]
 
-    dtypes = {
-        "amount": "string",
-        "dealname": "string",
-        "hs_object_id": "string"
-    }
+    dtypes = {"amount": "string", "dealname": "string", "hs_object_id": "string"}
 
     schema = [
-        SchemaField('amount', 'NUMERIC'),
-        SchemaField('dealname', 'STRING'),
-        SchemaField('hs_object_id', 'INT64'),
+        SchemaField("amount", "NUMERIC"),
+        SchemaField("dealname", "STRING"),
+        SchemaField("hs_object_id", "INT64"),
     ]
 
-    destination_table = f"{CONFIG.BIGQUERY_PROJECT}.{CONFIG.BIGQUERY_HUBSPOT_DATASET}.deal"
+    destination_table = (
+        f"{CONFIG.BIGQUERY_PROJECT}.{CONFIG.BIGQUERY_HUBSPOT_DATASET}.deal"
+    )
 
     last_df = None
 
